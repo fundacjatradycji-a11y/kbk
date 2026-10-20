@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ryneczek — KBK</title>
+<link rel="stylesheet" href="styles/common.css">
+<style>
+  :root {
+    --teal: #1a5a6b; --teal-dark: #13454f; --teal-deep: #0c3038;
+    --white: #ffffff; --paper: #f4eee0; --paper-ink: #1a252a; --paper-muted: #7a6f4d;
+    --paper-line: rgba(12, 48, 56, 0.18);
+    --line: rgba(255, 255, 255, 0.18); --line-2: rgba(255, 255, 255, 0.32);
+    --muted: rgba(255, 255, 255, 0.82); --muted-dim: rgba(255, 255, 255, 0.58);
+    --gold: #d4a95f; --pos: #4d7a5f; --neg: #a44650;
+    --maxw: 1140px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; overflow-x: hidden; }
+  body {
+    min-height: 100vh;
+    background: var(--teal);
+    background-image:
+      radial-gradient(ellipse at 15% -10%, rgba(43, 132, 153, 0.38) 0%, transparent 55%),
+      radial-gradient(ellipse at 100% 100%, rgba(12, 48, 56, 0.75) 0%, transparent 60%),
+      linear-gradient(180deg, #17505f 0%, #13454f 100%);
+    background-attachment: fixed;
+    color: var(--white);
+    font-family: 'Archivo', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    pointer-events: none; opacity: 0.04; z-index: 1;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode: overlay;
+  }
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13, 55, 65, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+    max-width: 100vw;
+  }
+  .nav-inner {
+    position: relative;
+    max-width: var(--maxw); margin: 0 auto;
+    padding: 11px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px;
+    min-width: 0;
+  }
+  .nav-brand {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; color: var(--white);
+    font-family: 'Anton', sans-serif;
+    font-size: 1.02rem; letter-spacing: 0.16em; text-transform: uppercase;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .nav-brand svg {
+  width: 18px;
+  height: 30px;
+  aspect-ratio: 240 / 400;
+  color: var(--white);
+  display: block;
+  flex-shrink: 0;
+}
+  .nav-back {
+    color: var(--muted); text-decoration: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 8px 14px; border: 1px solid var(--line-2);
+    transition: background 0.18s, color 0.18s;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .nav-back:hover { background: var(--white); color: var(--teal-deep); }
+
+  .wrap { position: relative; z-index: 2; max-width: 780px; margin: 0 auto; padding: 56px 20px 80px; }
+
+  main {
+    background: var(--paper);
+    color: var(--paper-ink);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.35);
+    padding: 44px 40px 38px;
+    position: relative;
+  }
+  main::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 3px; background: var(--teal-deep);
+  }
+
+  .doc-meta {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--paper-muted); margin-bottom: 22px;
+  }
+  h1 {
+    margin: 0 0 8px;
+    font-family: 'Anton', sans-serif; font-weight: 400;
+    font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+    line-height: 1; letter-spacing: 0.015em;
+    text-transform: uppercase; color: var(--teal-deep);
+  }
+  .subtitle {
+    margin: 0 0 30px; padding-bottom: 22px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.76rem; letter-spacing: 0.1em;
+    color: var(--paper-muted);
+    border-bottom: 1px solid var(--paper-line);
+  }
+
+  #products { display: grid; gap: 0; border-top: 1px solid var(--paper-line); }
+  .currency-block {
+    margin: 24px 0 12px;
+  }
+  .currency-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .currency-label {
+    display: inline-block;
+    margin: 0;
+    font-family: 'Archivo', sans-serif;
+    font-size: 0.96rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--teal-deep);
+  }
+  .currency-segment {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px;
+    border-radius: 999px;
+    border: 1px solid var(--paper-line);
+    background: rgba(255, 255, 255, 0.45);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 8px 20px rgba(12, 48, 56, 0.08);
+  }
+  .currency-option {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--teal-deep);
+    padding: 10px 16px;
+    min-width: 146px;
+    font-family: 'Archivo', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    cursor: pointer;
+    border-radius: 999px;
+    transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    white-space: nowrap;
+  }
+  .currency-option:hover:not(.active) {
+    background: rgba(26, 90, 107, 0.06);
+  }
+  .currency-option.active {
+    background: var(--teal-deep);
+    color: var(--paper);
+    box-shadow: 0 3px 0 rgba(12, 48, 56, 0.18);
+  }
+  .currency-option:focus-visible {
+    outline: 2px solid rgba(26, 90, 107, 0.4);
+    outline-offset: 2px;
+  }
+  .product {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    border-bottom: 1px solid var(--paper-line);
+    padding: 16px 4px;
+    background: transparent;
+  }
+  .product-name {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 0.98rem;
+    color: var(--paper-ink);
+    flex: 1 1 auto;
+    min-width: 0;
+    word-break: break-word;
+  }
+  .product-cost {
+    white-space: nowrap;
+  }
+  .qty-control {
+    display: flex; align-items: center; gap: 8px;
+    flex-shrink: 0;
+  }
+  .qty-button {
+    width: 38px; height: 38px;
+    border: 1px solid var(--teal-deep);
+    border-radius: 0;
+    background: transparent;
+    color: var(--teal-deep);
+    font-family: 'Anton', sans-serif;
+    font-size: 22px; line-height: 1;
+    cursor: pointer; padding: 0;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+  }
+  .qty-button:hover { background: var(--teal-deep); color: var(--paper); }
+
+  /* ── KLUCZOWA POPRAWKA: użyj input.qty-value, żeby wygrać specyficznością ── */
+  input.qty-value {
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    height: 38px;
+    text-align: center;
+    border: 1px solid var(--paper-line);
+    border-radius: 0;
+    background: #fffdf7;
+    padding: 6px 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    color: var(--paper-ink);
+    user-select: none; cursor: default;
+    flex-shrink: 0;
+  }
+
+  .row { display: grid; gap: 14px; margin-top: 26px; }
+  label {
+    display: block; margin: 0 0 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--teal-deep);
+  }
+  input, button { font: inherit; }
+  .auth-input,
+  input[type="text"]:not(.qty-value),
+  input[type="password"],
+  input[type="number"] {
+    width: 100%;
+    border: 1px solid var(--paper-line);
+    border-radius: 0;
+    background: #fffdf7;
+    padding: 12px 13px;
+    min-height: 46px;
+    color: var(--paper-ink);
+    font-family: 'Archivo', sans-serif;
+    font-size: 15px;
+    appearance: none; -webkit-appearance: none;
+  }
+  input:focus { outline: none; border-color: var(--teal); }
+
+  button#submit {
+    width: 100%;
+    border: 1px solid var(--teal-deep);
+    border-radius: 0;
+    background: var(--teal-deep);
+    color: var(--paper);
+    padding: 14px 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+  }
+  button#submit:hover:not(:disabled) { background: transparent; color: var(--teal-deep); }
+  button#submit:disabled { opacity: 0.55; cursor: default; }
+
+  .status-box {
+    margin-top: 20px;
+    border: 1px solid var(--paper-line);
+    border-radius: 0;
+    background: #fffdf7;
+    padding: 14px 16px;
+    min-height: 60px;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    font-size: 0.9rem; line-height: 1.5;
+    transition: opacity 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+  .status-box.hidden { opacity: 0; visibility: hidden; }
+  .status-box.error { border-color: rgba(164,70,80,0.4); background: rgba(164,70,80,0.08); color: var(--neg); }
+  .status-box.ok    { border-color: rgba(77,122,95,0.4); background: rgba(77,122,95,0.08); color: var(--pos); }
+  .status-box.info  { border-color: rgba(212,169,95,0.4); background: rgba(212,169,95,0.08); color: var(--paper-ink); }
+
+  .status-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(6, 29, 35, 0.78);
+    backdrop-filter: blur(8px);
+  }
+  .status-modal.hidden { display: none; }
+  .status-modal-card {
+    width: min(460px, 100%);
+    padding: 32px 28px 26px;
+    background: var(--paper);
+    color: var(--paper-ink);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.28);
+    text-align: center;
+  }
+  .status-modal-message {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .status-modal-message.error { color: var(--neg); }
+  .status-modal-message.ok { color: var(--pos); }
+  .status-modal-message.info { color: var(--paper-ink); }
+  .status-modal-close {
+    margin-top: 24px;
+    padding: 10px 18px;
+    border: 1px solid var(--teal-deep);
+    background: var(--teal-deep);
+    color: var(--paper);
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .status-modal-close:hover { background: transparent; color: var(--teal-deep); }
+  @media (max-width: 560px) {
+    main { padding: 32px 24px 28px; }
+    .wrap { padding: 40px 16px 60px; }
+    .currency-row {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .currency-segment {
+      width: 100%;
+      justify-content: space-between;
+    }
+    .currency-option {
+      min-width: 0;
+      flex: 1 1 0;
+      padding: 10px 10px;
+      font-size: 0.74rem;
+    }
+    .product { align-items: center; gap: 8px; }
+    .qty-button { width: 36px; height: 36px; font-size: 20px; }
+    input.qty-value {
+      width: 40px; min-width: 40px; max-width: 40px;
+      height: 36px; font-size: 14px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .nav-inner { padding: 10px 16px; gap: 10px; }
+    .nav-brand { font-size: 0.94rem; letter-spacing: 0.12em; gap: 8px; }
+    .nav-brand svg { width: 15px; height: 26px; }
+    .nav-back {
+      padding: 7px 11px;
+      font-size: 0.64rem;
+      letter-spacing: 0.12em;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .nav-inner { padding: 10px 12px; gap: 8px; }
+    .nav-back { padding: 6px 9px; font-size: 0.6rem; }
+    .nav-brand { font-size: 0.88rem; letter-spacing: 0.1em; }
+    main { padding: 28px 18px 24px; }
+  }
+</style>
+  <link rel="stylesheet" href="styles/common.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="kbk-logo" viewBox="0 0 240 400">
+      <rect x="111" y="0" width="18" height="400" fill="currentColor"/>
+      <circle cx="72" cy="105" r="58" fill="none" stroke="currentColor" stroke-width="14"/>
+      <circle cx="168" cy="105" r="58" fill="none" stroke="currentColor" stroke-width="14"/>
+      <path d="M 129 248 L 192 248 L 158 272 L 192 296 L 158 320 L 192 344 L 158 368 L 192 392 L 192 400 L 129 400 Z" fill="currentColor"/>
+    </symbol>
+  </defs>
+</svg>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <img class="brand-logo" src="resources/1MNIEJSZA%20NIESK_Obszar%20roboczy%201%20kopia.png" alt="KBK">
+      KBK
+    </a>
+    <a href="spolecznosc.html" class="nav-back">← strefa społeczności</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <main>
+    <div class="doc-meta">
+      <span>Ryneczek</span>
+    </div>
+    <h1>Ryneczek</h1>
+    <p class="subtitle">Wybierz produkty — zamówienie trafi do zatwierdzenia przez dyżurnego.</p>
+
+    <section id="products">Ładowanie produktów…</section>
+
+    <div class="currency-block">
+      <div class="currency-row">
+        <label class="currency-label">Chcę użyć rycarów:</label>
+        <div class="currency-segment" role="tablist" aria-label="Wybór waluty płatności">
+          <button type="button" class="currency-option active" data-currency="RCR" aria-pressed="true">depozytowych (RCR)</button>
+          <button type="button" class="currency-option" data-currency="RCRT" aria-pressed="false">transferowych (RCRT)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="login">Login</label>
+        <input id="login" class="auth-input" autocomplete="username">
+      </div>
+      <div>
+        <label for="pin">PIN</label>
+        <input id="pin" class="auth-input" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password">
+      </div>
+      <button id="submit">Wyślij zamówienie</button>
+    </div>
+
+    <div id="processing-status" class="status-box hidden" role="status" aria-live="polite"></div>
+
+  </main>
+</div>
+
+<div class="status-modal hidden" id="status-modal" role="dialog" aria-modal="true" aria-hidden="true" inert aria-labelledby="status-modal-message">
+  <div class="status-modal-card">
+    <p class="status-modal-message" id="status-modal-message" role="status" aria-live="polite"></p>
+    <button class="status-modal-close" type="button" id="status-modal-close">OK</button>
+  </div>
+</div>
+
+<script src="public-config.js"></script>
+<script src="js/feedback.js?v=20260930-2"></script>
+<script src="js/shared.js?v=20261001-1"></script>
+<script src="js/pin-reset.js?v=20260930-1"></script>
+<script>
+  const APP_CONFIG = window.KBK_APP_CONFIG;
+  const PUBLIC_SHEET_IDS = window.KBK_PUBLIC_SHEET_IDS;
+  const shared = window.KBKShared;
+  const safeText = shared.safeText;
+  const PRODUCT_CACHE_MS = 300000;
+  const productsEl = document.getElementById('products');
+  const processingStatus = document.getElementById('processing-status');
+  const statusModal = document.getElementById('status-modal');
+  const statusModalMessage = document.getElementById('status-modal-message');
+  const statusModalClose = document.getElementById('status-modal-close');
+  let statusDialogRelease = null;
+  const loginInput = document.getElementById('login');
+  const pinInput = document.getElementById('pin');
+  const pinReset = window.KBKPinReset.attach({ webAppUrl: APP_CONFIG.webAppUrl });
+  let productCache = null;
+  let productCacheTs = 0;
+  let selectedCurrency = 'RCR';
+
+  function updateCurrencyButtons() {
+    document.querySelectorAll('.currency-option').forEach(function (button) {
+      const active = button.dataset.currency === selectedCurrency;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+  }
+
+  function getCennikSheetId() {
+    return Promise.resolve(PUBLIC_SHEET_IDS.cennikFileId);
+  }
+
+  function showMessage(text, type) {
+    if (!text) { closeStatusModal(); return; }
+    statusModalMessage.textContent = text;
+    statusModalMessage.className = 'status-modal-message ' + (type || 'info');
+    if (statusModal.classList.contains('hidden')) {
+      statusModal.classList.remove('hidden');
+      statusDialogRelease = window.KBKDialog.open(statusModal, {
+        initialFocus: '#status-modal-close',
+        onEscape: closeStatusModal
+      });
+    }
+  }
+
+  function claimErrorMessage(error) {
+    var messages = {
+      invalid_request: 'Sprawdź login, PIN i wybrane produkty.',
+      wrong_pin: 'Nieprawidłowy login lub PIN.',
+      user_not_found: 'Nie udało się zweryfikować konta.',
+      invalid_total: 'Nie udało się obliczyć wartości zamówienia.',
+      insufficient_funds: 'Brak wystarczającego salda dla tego zamówienia.',
+      server_error: 'Nie udało się wysłać zamówienia. Spróbuj ponownie później.'
+    };
+    return Object.prototype.hasOwnProperty.call(messages, error)
+      ? messages[error]
+      : 'Nie udało się wysłać zamówienia. Spróbuj ponownie później.';
+  }
+
+  function showProcessingStatus(text) {
+    processingStatus.textContent = text || '';
+    processingStatus.className = text ? 'status-box info' : 'status-box hidden';
+  }
+
+  function closeStatusModal() {
+    statusModal.classList.add('hidden');
+    if (statusDialogRelease) {
+      const releaseFocus = statusDialogRelease;
+      statusDialogRelease = null;
+      releaseFocus();
+    }
+  }
+  statusModalClose.addEventListener('click', closeStatusModal);
+  statusModal.addEventListener('click', function (event) {
+    if (event.target === statusModal) closeStatusModal();
+  });
+  function resetOrderForm() {
+    loginInput.value = ''; pinInput.value = '';
+    productsEl.querySelectorAll('.qty-value').forEach(function (f) { f.value = '0'; });
+  }
+  function escapeHtml(value) {
+    const text = safeText(value, '');
+    return String(text).replace(/[&<>"']/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+    });
+  }
+  function renderProducts(products) {
+    if (!products || products.length === 0) {
+      productsEl.innerHTML = '<div class="product"><span class="product-name">Brak aktywnych produktów w cenniku.</span></div>';
+      return;
+    }
+    var currentQuantities = {};
+    productsEl.querySelectorAll('.qty-value').forEach(function (input) {
+      var index = Number(input.dataset.index);
+      if (!Number.isNaN(index)) currentQuantities[index] = clampQuantity(input.value);
+    });
+
+    productsEl.innerHTML = products.map(function (product, index) {
+      var qty = currentQuantities[index] || 0;
+      var displayCost = Number(product.cost);
+      return '<div class="product"><span class="product-name">' + escapeHtml(product.name) + ' · <span class="product-cost">' + displayCost + ' RCR</span></span><div class="qty-control"><button type="button" class="qty-button" data-action="decrement" data-index="' + index + '" aria-label="Zmniejsz">−</button><input class="qty-value" type="text" value="' + qty + '" readonly inputmode="numeric" data-index="' + index + '" data-name="' + escapeHtml(product.name) + '"><button type="button" class="qty-button" data-action="increment" data-index="' + index + '" aria-label="Zwiększ">+</button></div></div>';
+    }).join('');
+  }
+  function loadProducts(forceReload) {
+    const now = Date.now();
+    if (!forceReload && productCache && (now - productCacheTs) < PRODUCT_CACHE_MS) {
+      renderProducts(productCache);
+      return Promise.resolve(productCache);
+    }
+    return getCennikSheetId()
+      .then(function (sheetId) {
+        return shared.loadSheetJSONP(sheetId, 'CENNIK', { cacheMs: 300000, timeoutMs: 15000 });
+      })
+      .then(function (table) {
+        const rows = shared.tableToObjects(table);
+        const products = rows
+          .map(function (row) {
+            const name = shared.strFromCell(shared.lookupCell(row, ['Element', 'ELEMENT', 'element']));
+            const costCell = shared.lookupCell(row, ['Cena_RCR', 'CENA_RCR', 'Cena', 'cena', 'cena_rcr']);
+            const cost = shared.numFromCell(costCell);
+            const cleanName = String(name || '').trim();
+            if (!cleanName || !Number.isFinite(cost) || cost < 0) return null;
+            return { name: cleanName, cost: cost };
+          })
+          .filter(Boolean);
+        productCache = products;
+        productCacheTs = Date.now();
+        renderProducts(products);
+        return products;
+      });
+  }
+  function clampQuantity(value) {
+    var numeric = Number(value);
+    if (!Number.isFinite(numeric)) return 0;
+    return Math.min(9, Math.max(0, Math.round(numeric)));
+  }
+
+  document.querySelectorAll('.currency-option').forEach(function (button) {
+    button.addEventListener('click', function () {
+      selectedCurrency = button.dataset.currency || 'RCR';
+      updateCurrencyButtons();
+      if (productCache) renderProducts(productCache);
+    });
+  });
+
+  productsEl.addEventListener('click', function (event) {
+    var button = event.target.closest('.qty-button');
+    if (!button) return;
+    var index = Number(button.dataset.index);
+    var input = productsEl.querySelector('.qty-value[data-index="' + index + '"]');
+    if (!input) return;
+    var current = clampQuantity(input.value);
+    var nextValue = button.dataset.action === 'increment' ? current + 1 : current - 1;
+    input.value = String(clampQuantity(nextValue));
+  });
+  document.getElementById('submit').addEventListener('click', function () {
+    var items = Array.from(productsEl.querySelectorAll('.qty-value'))
+      .map(function (input) { return { name: input.dataset.name, quantity: Number(input.value) }; })
+      .filter(function (item) { return item.quantity > 0; });
+    var login = loginInput.value.trim().toLowerCase();
+    var pin = pinInput.value.trim();
+    if (!login || !/^\d{6}$/.test(pin) || items.length === 0) {
+      pinInput.value = '';
+      showMessage('Podaj login, 6-cyfrowy PIN i wybierz produkt.', 'error');
+      return;
+    }
+    var submitBtn = document.getElementById('submit');
+    submitBtn.disabled = true; submitBtn.textContent = 'Przetwarzanie…';
+    showProcessingStatus('Wysyłanie zamówienia…');
+    fetch(APP_CONFIG.webAppUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'claimRewards', login: login, pin: pin, items: items, currency: selectedCurrency })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        pinInput.value = '';
+        if (data && data.ok) resetOrderForm();
+        showProcessingStatus('');
+        if (pinReset.isLocked(data)) pinReset.open(login);
+        else showMessage(data && data.ok ? 'Zamówienie przekazano do zatwierdzenia.' : claimErrorMessage(data && data.error), data && data.ok ? 'ok' : 'error');
+      })
+      .catch(function () { pinInput.value = ''; showProcessingStatus(''); showMessage('Nie udało się połączyć z backendem.', 'error'); })
+      .finally(function () { submitBtn.disabled = false; submitBtn.textContent = 'Wyślij zamówienie'; });
+  });
+  updateCurrencyButtons();
+  loadProducts(true).catch(function () {
+    productsEl.innerHTML = '<div class="product"><span class="product-name">Nie udało się wczytać produktów.</span></div>';
+  });
+</script>
+</body>
+</html>
