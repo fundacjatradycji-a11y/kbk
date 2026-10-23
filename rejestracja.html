@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rejestracja — KBK</title>
+<title>Rejestracja - KBK</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -121,6 +121,7 @@
   }
     .checkbox-row.required { margin-top: 18px; }
     .checkbox-row.required label a { color: var(--teal-deep); text-decoration: underline; }
+    .required-marker { color: var(--neg); font-size: 1.15em; font-weight: 700; }
 
   /* NAV */
   .nav {
@@ -452,7 +453,7 @@
         <div class="checkbox-row required">
           <input type="checkbox" id="zgodaRODO" required>
           <label for="zgodaRODO">
-            <strong>Wymagane:</strong> Wyrażam zgodę na przetwarzanie moich danych osobowych (imię, nazwisko, e-mail, adres, telefon) oraz kontakt w sprawach związanych z byciem członkiem społeczności Królestwa Bez Kresu.
+            <span class="required-marker" aria-hidden="true">*</span> <strong>Wymagane:</strong> Wyrażam zgodę na przetwarzanie moich danych osobowych (imię, nazwisko, e-mail, adres, telefon) oraz kontakt w sprawach związanych z byciem członkiem społeczności Królestwa Bez Kresu.
             <a href="resources/polityka-prywatnosci.pdf" target="_blank" rel="noopener">Polityka prywatności</a>
           </label>
         </div>
@@ -471,10 +472,15 @@
         <div class="hint error" id="consentHint" style="display:none;"></div>
       </div>
 
-      <label>PIN (6 cyfr)</label>
       <div class="pin-row">
-        <div><input type="password" id="pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" required></div>
-        <div><input type="password" id="pinRepeat" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="powtórz PIN" required></div>
+        <div>
+          <label for="pin">PIN (6 cyfr)</label>
+          <input type="password" id="pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" required>
+        </div>
+        <div>
+          <label for="pinRepeat">Powtórz PIN</label>
+          <input type="password" id="pinRepeat" inputmode="numeric" pattern="[0-9]*" maxlength="6" required>
+        </div>
       </div>
       <div class="hint" id="pinHint"></div>
 
@@ -576,7 +582,7 @@
     migrationForm.classList.add('hidden');
     form.classList.remove('hidden');
     pageTitle.textContent = 'Załóż konto';
-    pageSubtitle.textContent = 'Dołącz do systemu KBK — po weryfikacji mailowej konto zostanie aktywowane.';
+    pageSubtitle.textContent = 'Dołącz do systemu KBK - po weryfikacji mailowej konto zostanie aktywowane.';
   }
 
   document.getElementById('newAccountChoice').addEventListener('click', showNewAccountForm);
@@ -811,5 +817,6 @@
     });
   });
 </script>
+<script src="js/i18n.js?v=20261022-1"></script>
 </body>
 </html>
