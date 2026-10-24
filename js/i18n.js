@@ -264,7 +264,7 @@
     'Polityka prywatności': 'Privacy policy',
     'Wyrażam zgodę na dopisanie do newslettera i otrzymywanie wiadomości na temat ważnych spraw dotyczących KBK drogą mailową.': 'I agree to subscribe to the newsletter and receive email updates about important Kingdom Without Limit matters.',
     'Chcę dołączyć do społeczności KBK na WhatsAppie (wymaga podania numeru telefonu).': 'I would like to join the KBK community on WhatsApp (a phone number is required).',
-    'Chcę otrzymywać okazjonalne upminki dorgą pocztową lub odebrać w ten sposób paszport KBK (wymaga podania adresu do wysyłki).': 'I would like to receive occasional gifts by post or receive my KBK passport this way (a delivery address is required).',
+    'Chcę otrzymywać okazjonalne upominki drogą pocztową lub odebrać w ten sposób paszport KBK (wymaga podania adresu do wysyłki).': 'I would like to receive occasional gifts by post or receive my KBK passport this way (a delivery address is required).',
     'Imię': 'First name',
     'Nazwisko': 'Last name',
     'opcjonalnie': 'optional',
