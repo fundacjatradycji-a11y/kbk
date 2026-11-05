@@ -6,7 +6,8 @@ window.KBK_PUBLIC_SHEET_IDS = {
   cennikFileId: '1das1eOdDMHmsNtAc08vBnGdVOExJr52T7E2ytVICeCY',
   wnioskiFileId: '1LzIFdzvn0WDU6HlCbUDTTAh75tu8q_Vq_VrsjkzNukg',
   transakcjeFileId: '1Pr4CcvpTN6Xb_NehijK138mZ5Wz_ZJyehK2E9q0tb-Q',
-  transakcjeArchiveFileId: '1jv-uAp-bMvKULrd0VRxd7Iz60wMEk4fK4KWtLD1DQvw'
+  transakcjeArchiveFileId: '1jv-uAp-bMvKULrd0VRxd7Iz60wMEk4fK4KWtLD1DQvw',
+            "tablicaFileId": "1hopVx-MscnOuSZFzF2hF7wt5DcyT1SIerYlY0E6RDig"
 };
 
 window.KBK_FEEDBACK_CONFIG = {
